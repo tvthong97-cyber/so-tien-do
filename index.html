@@ -225,7 +225,7 @@ textarea{min-height:60px;resize:vertical}
         <div class="muted" style="font-size:13px">1 = chưa làm được · 3 = làm được khi có nhắc · 4 = tự làm đều · 5 = hướng dẫn lại được người khác</div>
       </div>
       <div class="panel">
-        <h2>Học sản phẩm</h2>
+        <h2>Học sản phẩm <span class="muted" style="font-size:13px;font-weight:500">· Sổ tay: Bài 5</span></h2>
         <div class="tbl"><table id="prodTbl"></table></div>
       </div>
     </div>
@@ -298,7 +298,7 @@ textarea{min-height:60px;resize:vertical}
 
     <div class="panel">
       <h2>Chấm học sản phẩm</h2>
-      <div class="muted" style="font-size:14px">Thay "[điền tên]" bằng nhóm hàng thật của cửa hàng. Điểm là % câu trả lời đúng khi kiểm tra.</div>
+      <div class="muted" style="font-size:14px">Học theo Bài 5 trong sổ tay. Thay "[điền tên]" bằng nhóm hàng thật của cửa hàng. Điểm là % câu trả lời đúng khi kiểm tra.</div>
       <div id="prodEdit"></div>
       <button class="btn" type="button" id="saveProd">Lưu bảng sản phẩm</button>
     </div>
@@ -310,14 +310,14 @@ textarea{min-height:60px;resize:vertical}
 <script>
 (() => {
 const SKILLS = [
-  {k:'giao_tiep', n:'Giao tiếp', s:'Chào trong 5 giây, xưng hô đúng, luôn mỉm cười', t:[3,3,4,5], sales:1},
-  {k:'lang_nghe', n:'Lắng nghe', s:'Không ngắt lời, nhắc lại đúng nhu cầu khách', t:[2,3,4,4], sales:1},
-  {k:'quan_sat', n:'Quan sát khách', s:'Phân biệt khách "đang xem" và "muốn mua"', t:[2,3,3,4], sales:1},
-  {k:'tam_ly', n:'Nắm bắt tâm lý', s:'Nhận ra nhóm tính cách, đổi cách nói', t:[1,2,3,4], sales:1},
-  {k:'thuyet_phuc', n:'Thuyết phục & chốt', s:'Nói lợi ích, xử lý 5 lời từ chối, chốt đơn', t:[1,2,3,4], sales:1},
-  {k:'gio_giac', n:'Giờ giấc', s:'Có mặt trước ca 10 phút', t:[4,4,5,5], sales:0},
-  {k:'thoi_gian', n:'Quản trị thời gian', s:'Làm đủ checklist ca, tận dụng giờ vắng', t:[2,3,4,4], sales:0},
-  {k:'cam_xuc', n:'Quản trị cảm xúc', s:'Bình tĩnh với khách khó, không nản khi bị từ chối', t:[2,3,3,4], sales:0},
+  {k:'giao_tiep', b:'Bài 2, 3, 4', n:'Giao tiếp', s:'Chào trong 5 giây, xưng hô đúng, luôn mỉm cười', t:[3,3,4,5], sales:1},
+  {k:'lang_nghe', b:'Bài 7, 8', n:'Lắng nghe', s:'Không ngắt lời, nhắc lại đúng nhu cầu khách', t:[2,3,4,4], sales:1},
+  {k:'quan_sat', b:'Bài 9, 14', n:'Quan sát khách', s:'Phân biệt khách "đang xem" và "muốn mua"', t:[2,3,3,4], sales:1},
+  {k:'tam_ly', b:'Bài 11, 13', n:'Nắm bắt tâm lý', s:'Nhận ra nhóm tính cách, đổi cách nói', t:[1,2,3,4], sales:1},
+  {k:'thuyet_phuc', b:'Bài 12, 13, 14', n:'Thuyết phục & chốt', s:'Nói lợi ích, xử lý 5 lời từ chối, chốt đơn', t:[1,2,3,4], sales:1},
+  {k:'gio_giac', b:'Bài 1', n:'Giờ giấc', s:'Có mặt trước ca 10 phút', t:[4,4,5,5], sales:0},
+  {k:'thoi_gian', b:'Bài 6, 18', n:'Quản trị thời gian', s:'Làm đủ checklist ca, tận dụng giờ vắng', t:[2,3,4,4], sales:0},
+  {k:'cam_xuc', b:'Bài 10, 15, 17', n:'Quản trị cảm xúc', s:'Bình tĩnh với khách khó, không nản khi bị từ chối', t:[2,3,3,4], sales:0},
 ];
 const DEFAULT_PRODUCTS = [
   {name:'Nhóm hàng bán chạy nhất: [điền tên]', due:3},
@@ -492,7 +492,7 @@ function renderSkills(){
   const d = curDay(), cw = d && d>=1 ? weekOf(Math.min(30,d)) : null;
   let h = `<thead><tr><th>Kỹ năng</th>${[1,2,3,4].map(w=>`<th class="c">T${w}</th>`).join('')}</tr></thead><tbody>`;
   SKILLS.forEach(s => {
-    h += `<tr><td>${esc(s.n)}</td>`;
+    h += `<tr><td>${esc(s.n)}<div class="muted" style="font-size:12px">Sổ tay: ${esc(s.b)}</div></td>`;
     for (let w=1; w<=4; w++) {
       const v = skills['w'+w]?.[s.k], t = s.t[w-1];
       const cls = typeof v !== 'number' ? 'c-none' : v >= t ? 'c-ok' : v >= t-1 ? 'c-lo' : 'c-bad';
@@ -567,7 +567,7 @@ $('#cfgForm').addEventListener('submit', async e => {
 const curWk = () => document.querySelector('input[name=wk]:checked').value;
 function renderRate(){
   const w = curWk(); pending = {...(skills['w'+w] || {})};
-  $('#rateList').innerHTML = SKILLS.map(s => `<div class="rate"><div class="nm">${esc(s.n)}<small>${esc(s.s)} · mục tiêu tuần ${w}: ${s.t[w-1]}</small></div><div class="dots" data-k="${s.k}">${[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${pending[s.k]===v}" aria-label="${esc(s.n)} ${v} điểm">${v}</button>`).join('')}</div></div>`).join('');
+  $('#rateList').innerHTML = SKILLS.map(s => `<div class="rate"><div class="nm">${esc(s.n)}<small>${esc(s.s)}</small><small>Sổ tay: ${esc(s.b)} · mục tiêu tuần ${w}: ${s.t[w-1]}</small></div><div class="dots" data-k="${s.k}">${[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${pending[s.k]===v}" aria-label="${esc(s.n)} ${v} điểm">${v}</button>`).join('')}</div></div>`).join('');
 }
 $('#rateList').addEventListener('click', e => {
   const b = e.target.closest('button[data-v]'); if (!b) return;
